@@ -45,12 +45,12 @@ export const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps
   };
 
   return (
-    <Card className="overflow-hidden bg-card border-border shadow-elegant transition-smooth hover:shadow-primary">
-      <div className="aspect-square bg-gradient-subtle p-8">
+    <Card className="overflow-hidden bg-card border-border shadow-elegant transition-smooth hover:shadow-primary flex">
+      <div className="bg-gradient-subtle p-8">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-full object-contain transition-smooth hover:scale-105"
+          className="w-[60vw] h-[60vh] transition-smooth hover:scale-105"
         />
       </div>
       
@@ -62,7 +62,7 @@ export const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps
               {product.inStock} in stock
             </Badge>
           </div>
-          <p className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          <p className="text-3xl font-bold text-gradient-primary bg-clip-text ">
             ${product.price.toFixed(2)}
           </p>
           <p className="text-muted-foreground leading-relaxed">{product.description}</p>

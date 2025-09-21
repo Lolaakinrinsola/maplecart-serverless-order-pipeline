@@ -103,7 +103,7 @@ export const CheckoutForm = ({ orderItem, onOrderComplete, onCancel }: CheckoutF
           <Separator />
           <div className="flex justify-between items-center text-lg font-semibold">
             <span>Total</span>
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
+            <span className="text-gradient-primary bg-clip-text text-transparent">
               ${total.toFixed(2)}
             </span>
           </div>

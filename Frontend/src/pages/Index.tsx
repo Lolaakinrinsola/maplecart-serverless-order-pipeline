@@ -53,7 +53,7 @@ const Index = () => {
     switch (currentStep) {
       case "product":
         return (
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-[70vw] mx-auto">
             <ProductCard
               product={product}
               onAddToCart={handleAddToCart}
@@ -125,8 +125,8 @@ const Index = () => {
       <header className="bg-card border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              TechStore
+            <h1 className="text-2xl font-bold text-gradient-primary bg-clip-text ">
+              MapleCart
             </h1>
             <div className="text-sm text-muted-foreground">
               Secure Checkout
@@ -144,7 +144,7 @@ const Index = () => {
       <footer className="bg-card border-t border-border mt-16">
         <div className="container mx-auto px-4 py-6 text-center">
           <p className="text-sm text-muted-foreground">
-            Powered by Azure Functions • Secure SSL Checkout
+            Made by Lola Akinrinsola @2025
           </p>
         </div>
       </footer>

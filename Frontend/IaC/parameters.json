@@ -1,0 +1,9 @@
+{
+    "location": { "value": "canadacentral" },
+    "storageName": { "value": "maplecartstorage01" },
+    "functionAppName": { "value": "maplecart-funcapp" },
+    "sqlServerName": { "value": "maplecart-sqlserver" },
+    "sqlAdmin":{"value":"azureUser"},
+    "sqlPassword":{"value":"test@12345"}
+  }
+  

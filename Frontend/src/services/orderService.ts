@@ -23,7 +23,7 @@ export interface OrderResponse {
 }
 
 // Azure Function endpoint - replace with your actual endpoint
-const AZURE_FUNCTION_ENDPOINT = "https://your-function-app.azurewebsites.net/api/CreateOrder";
+const AZURE_FUNCTION_ENDPOINT = "https://maplecart-funcapp.azurewebsites.net/api/CreateOrder";
 
 export const submitOrder = async (orderData: OrderData): Promise<OrderResponse> => {
   try {

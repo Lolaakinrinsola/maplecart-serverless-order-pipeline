@@ -8,6 +8,8 @@ The project has two parts:
 * **Backend** (Azure Functions API)
 
 ---
+📺 **Watch the Demo Video on YouTube** → [https://youtu.be/aDXKJD3JWSY](https://youtu.be/aDXKJD3JWSY)
+
 
 ## 📂 Project Structure
 
@@ -121,7 +123,9 @@ maplecart/
    * **POST** `/api/CreateOrder` → Save order → Blob Storage + SQL
 
 ---
+## 🛠️ Architecture (Phase 1)
 
+![Architecture Diagram](Architecture.png)
 ## 🔗 End-to-End Flow
 
 1. User places an order on the **frontend website**.

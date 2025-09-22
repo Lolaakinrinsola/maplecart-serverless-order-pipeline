@@ -1,9 +1,14 @@
+// src/functions/createOrder.js
+
 const { app } = require('@azure/functions');
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { QueueClient } = require("@azure/storage-queue");
-const { DefaultAzureCredential } = require("@azure/identity");
 const sql = require("mssql");
+const { DefaultAzureCredential } = require("@azure/identity");
 
+//
+// -------------------- CreateOrder (HTTP Trigger) --------------------
+//
 app.http('CreateOrder', {
     methods: ['POST'],
     authLevel: 'anonymous',
@@ -18,6 +23,7 @@ app.http('CreateOrder', {
                 };
             }
 
+            // Generate orderId
             const orderId = `ORDER-${Date.now()}`;
             order.orderId = orderId;
 
@@ -25,15 +31,18 @@ app.http('CreateOrder', {
             const blobConnectionString = process.env.AzureWebJobsStorage;
             const blobServiceClient = BlobServiceClient.fromConnectionString(blobConnectionString);
             const containerClient = blobServiceClient.getContainerClient("orders");
+            await containerClient.createIfNotExists();
 
             const blobName = `${orderId}.json`;
             const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-            await blockBlobClient.upload(JSON.stringify(order), Buffer.byteLength(JSON.stringify(order)));
+            const orderData = JSON.stringify(order);
+            await blockBlobClient.upload(orderData, Buffer.byteLength(orderData));
             context.log(`✅ Saved order ${orderId} to blob storage`);
 
             // ---------- 2. Send message to Queue ----------
             const queueClient = new QueueClient(blobConnectionString, "orderqueue");
-            await queueClient.sendMessage(JSON.stringify({ blobName }));
+            await queueClient.createIfNotExists();
+            await queueClient.sendMessage(JSON.stringify({ blobName, orderId }));
             context.log(`✅ Sent queue message for ${orderId}`);
 
             // ---------- 3. Insert into SQL using Managed Identity ----------
@@ -54,8 +63,8 @@ app.http('CreateOrder', {
                 .input("orderId", sql.NVarChar, orderId)
                 .input("item", sql.NVarChar, order.item)
                 .input("quantity", sql.Int, order.quantity)
-                .input("price", sql.Decimal(10,2), order.price)
-                .input("total", sql.Decimal(10,2), order.total)
+                .input("price", sql.Decimal(10, 2), order.price)
+                .input("total", sql.Decimal(10, 2), order.total)
                 .input("email", sql.NVarChar, order.customer.email)
                 .input("firstName", sql.NVarChar, order.customer.firstName)
                 .input("lastName", sql.NVarChar, order.customer.lastName)
@@ -80,7 +89,7 @@ app.http('CreateOrder', {
             };
 
         } catch (err) {
-            context.error(" Error processing order:", err);
+            context.error("❌ Error processing order:", err);
             return {
                 status: 500,
                 jsonBody: { success: false, message: "Order processing failed", details: err.message }

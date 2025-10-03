@@ -5,7 +5,8 @@ param sqlServerName string
 param sqlAdmin string
 @secure()
 param sqlPassword string
-
+// param aadAdminName string
+// param aadAdminObjectId string
 // Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = {
   name: storageName
@@ -39,7 +40,7 @@ resource queueService 'Microsoft.Storage/storageAccounts/queueServices@2021-09-0
 
 // Queue
 resource orderQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2021-09-01' = {
-  name: 'orderqueue'
+  name: 'order-queue'
   parent: queueService
 }
 
@@ -98,6 +99,10 @@ resource sqlServer 'Microsoft.Sql/servers@2022-02-01-preview' = {
     administratorLogin: sqlAdmin
     administratorLoginPassword: sqlPassword
     // administrators: {
+    //   administratorType: 'ActiveDirectory'
+    //   login: aadAdminName
+    //   sid: aadAdminObjectId
+    //   tenantId: subscription().tenantId
     //   azureADOnlyAuthentication: true
     // }
     version: '12.0'

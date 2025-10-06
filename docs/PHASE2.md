@@ -1,8 +1,4 @@
----
 
-## 📘 Phase 2 README – Resilient Pipeline with Queue + Email
-
-```markdown
 # MapleCart – Phase 2: Resilient Pipeline with Queue + Email
 
 This phase extends the core pipeline with **decoupling and observability**.  
@@ -86,6 +82,3 @@ Phase 2 makes the system:
 * **Observable** → logs + poison queue.
 * **Customer-friendly** → email confirmation pipeline.
 
-````
-
----

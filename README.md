@@ -14,6 +14,8 @@ The project has two parts:
 ## 🚦 Phases
 - **[Phase 1 – Core Pipeline](./docs/PHASE1.md)**  
 - **[Phase 2 – Resilient Pipeline](./docs/PHASE2.md)**  
+- **[Phase 3 – Observability & Monitoring](./docs/PHASE3.md)**  
+- **[Phase 4 – Secure Configuration with Azure Key Vault & App Configuration](./docs/PHASE4.md)**  
 
 ---
 

@@ -16,6 +16,7 @@ app.http('CreateOrder', {
 
             const orderId = `ORDER-${Date.now()}`;
             order.orderId = orderId;
+            context.log(`[CreateOrder] accepted orderId=${orderId} stage=accepted`);
 
             // --- Save to Blob ---
             const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AzureWebJobsStorage);
@@ -25,14 +26,15 @@ app.http('CreateOrder', {
             const blobName = `${orderId}.json`;
             const blockBlobClient = containerClient.getBlockBlobClient(blobName);
             await blockBlobClient.upload(JSON.stringify(order), Buffer.byteLength(JSON.stringify(order)));
+            context.log(`[CreateOrder] saved-to-blob orderId=${orderId} blob=${blobName} stage=blob`);
 
             // --- Send to Queue ---
             const queueClient = new QueueClient(process.env.AzureWebJobsStorage, "order-queue");
             await queueClient.createIfNotExists();
             await queueClient.sendMessage(Buffer.from(JSON.stringify({ blobName, orderId })).toString("base64"));
+            context.log(`[CreateOrder] enqueued orderId=${orderId} queue=order-queue stage=queue`);
 
-            context.log(`✅ Queued order ${orderId}`);
-            
+            // context.log(`✅ Queued order ${orderId}`);
             // --- Return FAST response ---
             return {
                 status: 202, // Accepted, processing async

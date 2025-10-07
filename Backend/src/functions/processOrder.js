@@ -12,7 +12,6 @@ app.storageQueue("ProcessOrder", {
   queueName: "order-queue",
   handler: async (message, context) => {
     context.log(`📦 Processing queue message: ${JSON.stringify(message)}`);
-
     try {
       // Parse queue message safely
       let payload;
@@ -22,6 +21,7 @@ app.storageQueue("ProcessOrder", {
         payload = message;
       }
       const { blobName, orderId } = payload;
+      context.log(`[ProcessOrder] dequeued orderId=${orderId} stage=dequeue`);
 
       // --- 1. Get order JSON from Blob ---
       const blobServiceClient = BlobServiceClient.fromConnectionString(
@@ -29,6 +29,7 @@ app.storageQueue("ProcessOrder", {
       );
       const containerClient = blobServiceClient.getContainerClient("orders");
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      context.log(`[ProcessOrder] read-blob orderId=${orderId} blob=${blobName} stage=blob`);
 
       const downloadResponse = await blockBlobClient.download();
       const downloaded = await streamToString(
@@ -41,7 +42,7 @@ app.storageQueue("ProcessOrder", {
       const tokenResponse = await credential.getToken(
         "https://database.windows.net/"
       );
-
+    //   throw new Error("force test")
       await sql.connect({
         server: process.env.SQL_SERVER,
         database: process.env.SQL_DATABASE,
@@ -72,6 +73,7 @@ app.storageQueue("ProcessOrder", {
       context.log(
         `✅ Inserted order ${orderId} into SQL (or skipped if duplicate)`
       );
+      context.log(`[ProcessOrder] sql-inserted orderId=${orderId} stage=sql`);
 
       // --- 3. Send confirmation email ---
       if (
@@ -98,8 +100,8 @@ app.storageQueue("ProcessOrder", {
         } else {
           context.log(`⚠️ Email not sent. Status: ${result.status}`);
         }
+        context.log(`[ProcessOrder] email-sent orderId=${orderId} stage=email`);
 
-        context.log(`📧 Sent email to ${order.customer.email}`);
       } else {
         context.log(
           "⚠️ Email not sent — ACS settings missing or no customer email."

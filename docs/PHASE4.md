@@ -35,7 +35,7 @@ az keyvault secret set \
 ```
 
  *Screenshot:*
-[`../docs/images/phase4/keyvault-secrets.png` — Key Vault secrets list showing Acs--ConnectionString, Sql--ConnectionString.](../docs/images/phase4/keyvault.png)
+[Key Vault secrets list showing Acs--ConnectionString, Sql--ConnectionString.](../docs/images/phase4/keyvault.png)
 
 ---
 
@@ -58,7 +58,7 @@ az role assignment create \
 
 📸 *Screenshot:*
 
-[`../docs/images/phase4/function-identity.png` — Function App Identity tab (System assigned ON).](../docs/images/phase4/function%20identity.png)
+[ Function App Identity tab (System assigned ON).](../docs/images/phase4/function%20identity.png)
 
 ---
 
@@ -71,10 +71,10 @@ Inside **Function App → Configuration**, replace secrets with a Key Vault refe
 ```
 
  *Screenshot:*
-* [`../docs/images/phase4/function-env.png` — App settings showing Key Vault icon ✅ under **Source**.](../docs/images/phase4/function%20using%20keyvault.png)
-* [../docs/images/phase4/function-cors.png — CORS tab showing allowed origins for client applications.](../docs/images/phase4/cors.png)
-* [../docs/images/phase4/function-storage-iam.png — IAM role assignment showing Function App access to Storage Account.](../docs/images/phase4/storage%20IAM.png)
-* [../docs/images/phase4/function-sql-connection.png — SQL Server firewall and connection string settings referencing Function App.](../docs/images/phase4/ADS%20screenshot.png)
+* [ App settings showing Key Vault icon under **Source**.](../docs/images/phase4/function%20using%20keyvault.png)
+* [CORS tab showing allowed origins for client applications.](../docs/images/phase4/cors.png)
+* [IAM role assignment showing Function App access to Storage Account.](../docs/images/phase4/storage%20IAM.png)
+* [SQL Server firewall and connection string settings referencing Function App.](../docs/images/phase4/ADS%20screenshot.png)
 ---
 
 ## ⚙️ Step 4 – Add App Configuration (Optional)

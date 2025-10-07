@@ -197,18 +197,6 @@ az storage message clear \
 
 ---
 
-## 📸 Suggested Screenshot Uploads for GitHub
-
-1. Diagnostic Settings for each resource (Functions, Storage, SQL, ACS)
-2. App Insights Log Alert setup
-3. Storage Queue Metric alert setup
-4. Custom Log query for poison queue
-5. ACS KQL query + chart output
-6. Dashboard overview (final look)
-7. Email alert notification example
-
----
-
 ## 🏁 Outcome
 
 By completing Phase 3, MapleCart achieved full operational visibility across all services — proactive alerts, unified metrics, and actionable dashboards. This monitoring foundation ensures reliability and faster troubleshooting in future phases.

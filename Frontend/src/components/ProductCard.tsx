@@ -45,18 +45,18 @@ export const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps
   };
 
   return (
-    <Card className="overflow-hidden bg-card border-border shadow-elegant transition-smooth hover:shadow-primary flex">
+    <Card className="overflow-hidden bg-card border-border shadow-elegant transition-smooth hover:shadow-primary md:flex">
       <div className="bg-gradient-subtle p-8">
         <img
           src={product.image}
           alt={product.name}
-          className="w-[60vw] h-[60vh] transition-smooth hover:scale-105"
+          className="w-[60vw] md:h-[60vh] transition-smooth hover:scale-105"
         />
       </div>
       
       <div className="p-6 space-y-6">
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="md:flex items-center justify-between">
             <h1 className="text-2xl font-bold text-foreground">{product.name}</h1>
             <Badge variant="secondary" className="text-sm">
               {product.inStock} in stock

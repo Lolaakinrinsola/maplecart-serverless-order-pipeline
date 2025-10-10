@@ -35,7 +35,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
             <FaBoxOpen className="text-blue-600" />
-            Recent Orders
+            All Recent Orders
           </h2>
           <button
             onClick={loadOrders}

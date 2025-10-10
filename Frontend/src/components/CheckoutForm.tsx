@@ -60,15 +60,22 @@ export const CheckoutForm = ({ orderItem, onOrderComplete, onCancel }: CheckoutF
         orderDate: new Date().toISOString(),
       };
 
-      await submitOrder(orderData);
-      
+     const res= await submitOrder(orderData);
+     if (res.success) {
       toast({
         title: "Order Successful!",
         description: "Your order has been submitted successfully.",
         variant: "default",
       });
       
-      onOrderComplete();
+      onOrderComplete();}
+      else {
+        toast({
+          title: "Order Failed",
+          description: "There was an error processing your order. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Order submission failed:", error);
       toast({

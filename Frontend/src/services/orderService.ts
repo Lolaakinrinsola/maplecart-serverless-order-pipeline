@@ -24,7 +24,7 @@ export interface OrderResponse {
 const baseUrl = import.meta.env.VITE_AZURE_FUNCTION_ENDPOINT;
 // Azure Function endpoint - replace with your actual endpoint
 const AZURE_FUNCTION_ENDPOINT = `${baseUrl}/CreateOrder`;
-
+console.log("Function baseUrl:", baseUrl);
 export const submitOrder = async (orderData: OrderData): Promise<OrderResponse> => {
   try {
     console.log("Submitting order to Azure Function:", orderData);

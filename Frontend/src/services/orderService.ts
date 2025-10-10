@@ -21,9 +21,9 @@ export interface OrderResponse {
   orderId?: string;
   message?: string;
 }
-
+const baseUrl = import.meta.env.VITE_AZURE_FUNCTION_ENDPOINT;
 // Azure Function endpoint - replace with your actual endpoint
-const AZURE_FUNCTION_ENDPOINT = "https://maplecart-funcapp.azurewebsites.net/api/CreateOrder";
+const AZURE_FUNCTION_ENDPOINT = `${baseUrl}/CreateOrder`;
 
 export const submitOrder = async (orderData: OrderData): Promise<OrderResponse> => {
   try {
@@ -74,3 +74,11 @@ export const validateOrderData = (orderData: OrderData): boolean => {
   
   return requiredFields.every(field => field && field.toString().trim() !== "");
 };
+
+export async function fetchOrders(source = 'sql') {
+  const response = await fetch(
+    `${baseUrl}/GetOrders?source=${source}`
+  );
+  if (!response.ok) throw new Error('Failed to fetch orders');
+  return await response.json();
+}

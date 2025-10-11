@@ -1,47 +1,163 @@
-name: Azure Static Web Apps CI/CD
+name: MapleCart CI/CD Pipeline 🚀
 
+# -------------------------------------------------------------------
+# 🔹 TRIGGERS
+# -------------------------------------------------------------------
+# Run on pushes to main (production) or dev (staging),
+# and on pull requests targeting main.
 on:
   push:
     branches:
       - main
+      - dev
   pull_request:
-    types: [opened, synchronize, reopened, closed]
     branches:
       - main
+      - dev
 
+# -------------------------------------------------------------------
+# 🔹 ENVIRONMENT GLOBALS
+# -------------------------------------------------------------------
+env:
+  NODE_VERSION: 20
+  APP_PATH: Frontend
+  BUILD_PATH: dist
+
+# -------------------------------------------------------------------
+# 🔹 JOB 1: Validate Azure Infrastructure
+# -------------------------------------------------------------------
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+  validate-infra:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
+    name: 🔍 Validate Azure Infrastructure
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Azure CLI
+        uses: azure/cli@v2
         with:
-          submodules: true
-          lfs: false
-      - name: Build And Deploy
+          azcliversion: latest
+
+      - name: Validate resources
+        run: |
+          echo "Validating Azure resources..."
+          az group show --name maplecart-rg
+          az functionapp show --name maplecart-funcapp --resource-group maplecart-rg
+          az staticwebapp show --name maplecart-frontend --resource-group maplecart-rg
+        continue-on-error: false
+
+# -------------------------------------------------------------------
+# 🔹 JOB 2: Build, Lint, and Test Frontend
+# -------------------------------------------------------------------
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: 🧪 Build, Lint, and Test Frontend
+    needs: validate-infra
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.APP_PATH }}
+
+      - name: Run Linter
+        run: npm run lint --if-present
+        working-directory: ${{ env.APP_PATH }}
+
+      - name: Run Tests
+        run: npm test --if-present
+        working-directory: ${{ env.APP_PATH }}
+
+      - name: Build Project
+        run: npm run build
+        working-directory: ${{ env.APP_PATH }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: maplecart-build
+          path: ${{ env.APP_PATH }}/${{ env.BUILD_PATH }}
+
+# -------------------------------------------------------------------
+# 🔹 JOB 3: Deploy to Azure Static Web App
+# -------------------------------------------------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    name: 🚀 Deploy to Azure Static Web App
+    needs: build-and-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: maplecart-build
+          path: ${{ env.APP_PATH }}/${{ env.BUILD_PATH }}
+
+      - name: Deploy to Azure Static Web App
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_YELLOW_GLACIER_01A9DA70F }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "Frontend" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "dist" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+          app_location: ${{ env.APP_PATH }}
+          output_location: ${{ env.BUILD_PATH }}
         env:
           VITE_AZURE_FUNCTION_ENDPOINT: ${{ secrets.VITE_AZURE_FUNCTION_ENDPOINT }}
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+          VITE_ENVIRONMENT: production
+
+# -------------------------------------------------------------------
+# 🔹 JOB 4: Post-Deployment Smoke Test
+# -------------------------------------------------------------------
+  smoke-test:
     runs-on: ubuntu-latest
-    name: Close Pull Request Job
+    name: 🔥 Post-Deployment Smoke Test
+    needs: deploy
     steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_YELLOW_GLACIER_01A9DA70F }}
-          action: "close"
+      - name: Test API endpoint availability
+        run: |
+          echo "Checking API health..."
+          curl -f -s ${{ secrets.VITE_AZURE_FUNCTION_ENDPOINT }}/GetOrders?source=sql | jq .
+        continue-on-error: false
+
+      - name: Test Frontend availability
+        run: |
+          echo "Checking frontend availability..."
+          curl -f -I https://yellow-glacier-01a9da70f.2.azurestaticapps.net
+        continue-on-error: false
+
+# -------------------------------------------------------------------
+# 🔹 JOB 5: Notifications (Optional)
+# -------------------------------------------------------------------
+  # notify:
+  #   runs-on: ubuntu-latest
+  #   name: 📢 Send Deployment Notification
+  #   needs: smoke-test
+  #   if: always()
+  #   steps:
+  #     - name: Notify via Slack
+  #       if: ${{ success() }}
+  #       uses: rtCamp/action-slack-notify@v2
+  #       env:
+  #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  #         SLACK_COLOR: good
+  #         SLACK_TITLE: "✅ MapleCart Deployed Successfully!"
+  #         SLACK_MESSAGE: "Production deployment to Azure Static Web App completed."
+
+  #     - name: Notify Failure
+  #       if: ${{ failure() }}
+  #       uses: rtCamp/action-slack-notify@v2
+  #       env:
+  #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  #         SLACK_COLOR: danger
+  #         SLACK_TITLE: "❌ MapleCart Deployment Failed!"
+  #         SLACK_MESSAGE: "Check GitHub Actions logs for details."

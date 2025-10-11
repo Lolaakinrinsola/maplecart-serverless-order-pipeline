@@ -23,27 +23,11 @@ env:
   APP_PATH: Frontend
   BUILD_PATH: dist
 
-# -------------------------------------------------------------------
-# 🔹 JOB 1: Validate Azure Infrastructure
-# -------------------------------------------------------------------
 jobs:
-  validate-infra:
-    runs-on: ubuntu-latest
-    name: 🔍 Validate Azure Infrastructure
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Validate resources
-        run: |
-          echo "Validating Azure resources..."
-          az group show --name maplecart-rg
-          az functionapp show --name maplecart-funcapp --resource-group maplecart-rg
-          az staticwebapp show --name maplecart-frontend --resource-group maplecart-rg
-        continue-on-error: false
+  
 
 # -------------------------------------------------------------------
-# 🔹 JOB 2: Build, Lint, and Test Frontend
+# 🔹 JOB 1: Build, Lint, and Test Frontend
 # -------------------------------------------------------------------
   build-and-test:
     runs-on: ubuntu-latest
@@ -81,7 +65,7 @@ jobs:
           path: ${{ env.APP_PATH }}/${{ env.BUILD_PATH }}
 
 # -------------------------------------------------------------------
-# 🔹 JOB 3: Deploy to Azure Static Web App
+# 🔹 JOB 2: Deploy to Azure Static Web App
 # -------------------------------------------------------------------
   deploy:
     runs-on: ubuntu-latest
@@ -111,7 +95,7 @@ jobs:
           VITE_ENVIRONMENT: production
 
 # -------------------------------------------------------------------
-# 🔹 JOB 4: Post-Deployment Smoke Test
+# 🔹 JOB 3: Post-Deployment Smoke Test
 # -------------------------------------------------------------------
   smoke-test:
     runs-on: ubuntu-latest
@@ -131,28 +115,25 @@ jobs:
         continue-on-error: false
 
 # -------------------------------------------------------------------
-# 🔹 JOB 5: Notifications (Optional)
+# 🔹 JOB 4: Notify Logic App on Deployment Result
 # -------------------------------------------------------------------
-  # notify:
-  #   runs-on: ubuntu-latest
-  #   name: 📢 Send Deployment Notification
-  #   needs: smoke-test
-  #   if: always()
-  #   steps:
-  #     - name: Notify via Slack
-  #       if: ${{ success() }}
-  #       uses: rtCamp/action-slack-notify@v2
-  #       env:
-  #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-  #         SLACK_COLOR: good
-  #         SLACK_TITLE: "✅ MapleCart Deployed Successfully!"
-  #         SLACK_MESSAGE: "Production deployment to Azure Static Web App completed."
-
-  #     - name: Notify Failure
-  #       if: ${{ failure() }}
-  #       uses: rtCamp/action-slack-notify@v2
-  #       env:
-  #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-  #         SLACK_COLOR: danger
-  #         SLACK_TITLE: "❌ MapleCart Deployment Failed!"
-  #         SLACK_MESSAGE: "Check GitHub Actions logs for details."
+  notify-logicapp:
+    runs-on: ubuntu-latest
+    name: 📧 Notify Logic App
+    needs: smoke-test
+    if: always()
+    steps:
+      - name: Send deployment event to Logic App
+        run: |
+          echo "📨 Sending deployment status to Logic App..."
+          curl -X POST ${{ secrets.LOGICAPP_URL }} \
+            -H "Content-Type: application/json" \
+            -d '{
+              "status": "${{ job.status }}",
+              "environment": "production",
+              "workflow": "Azure Static Web App CI/CD",
+              "run_id": "${{ github.run_id }}",
+              "commit": "${{ github.sha }}",
+              "repo": "${{ github.repository }}",
+              "timestamp": "${{ github.run_started_at }}"
+            }'

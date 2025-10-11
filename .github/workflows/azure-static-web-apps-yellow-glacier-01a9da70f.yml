@@ -126,12 +126,4 @@ jobs:
           echo "📨 Sending deployment status to Logic App..."
           curl -X POST ${{ secrets.LOGICAPP_URL }} \
             -H "Content-Type: application/json" \
-            -d '{
-              "status": "${{ job.status }}",
-              "environment": "production",
-              "workflow": "Azure Static Web App CI/CD",
-              "run_id": "${{ github.run_id }}",
-              "commit": "${{ github.sha }}",
-              "repo": "${{ github.repository }}",
-              "timestamp": "${{ github.run_started_at }}"
-            }'
+            -d '{"status": "${{ job.status }}","environment": "production","workflow": "Azure Static Web App CI/CD","run_id": "${{ github.run_id }}","commit": "${{ github.sha }}","repo": "${{ github.repository }}","timestamp": "${{ github.run_started_at }}"}'

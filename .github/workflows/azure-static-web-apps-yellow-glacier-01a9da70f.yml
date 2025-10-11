@@ -3,8 +3,7 @@ name: MapleCart CI/CD Pipeline 🚀
 # -------------------------------------------------------------------
 # 🔹 TRIGGERS
 # -------------------------------------------------------------------
-# Run on pushes to main (production) or dev (staging),
-# and on pull requests targeting main.
+# Run automatically on pushes or PRs to main (prod) and dev (staging)
 on:
   push:
     branches:
@@ -23,16 +22,13 @@ env:
   APP_PATH: Frontend
   BUILD_PATH: dist
 
-jobs:
-  
-
 # -------------------------------------------------------------------
 # 🔹 JOB 1: Build, Lint, and Test Frontend
 # -------------------------------------------------------------------
+jobs:
   build-and-test:
     runs-on: ubuntu-latest
     name: 🧪 Build, Lint, and Test Frontend
-    needs: validate-infra
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -41,6 +37,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.APP_PATH }}/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -115,11 +113,11 @@ jobs:
         continue-on-error: false
 
 # -------------------------------------------------------------------
-# 🔹 JOB 4: Notify Logic App on Deployment Result
+# 🔹 JOB 4: Notify via Logic App (Email)
 # -------------------------------------------------------------------
   notify-logicapp:
     runs-on: ubuntu-latest
-    name: 📧 Notify Logic App
+    name: 📧 Notify Logic App (Deployment Status)
     needs: smoke-test
     if: always()
     steps:

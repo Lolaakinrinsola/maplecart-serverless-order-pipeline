@@ -34,11 +34,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Azure CLI
-        uses: azure/cli@v2
-        with:
-          azcliversion: latest
-
       - name: Validate resources
         run: |
           echo "Validating Azure resources..."

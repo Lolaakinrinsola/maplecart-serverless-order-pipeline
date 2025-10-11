@@ -50,7 +50,7 @@ export const ProductCard = ({ product, onAddToCart, onBuyNow }: ProductCardProps
         <img
           src={product.image}
           alt={product.name}
-          className="w-[60vw] md:h-[60vh] transition-smooth hover:scale-105"
+          className="md:w-[60vw] md:h-[60vh] transition-smooth hover:scale-105"
         />
       </div>
       

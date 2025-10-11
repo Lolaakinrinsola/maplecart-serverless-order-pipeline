@@ -54,7 +54,7 @@ const Index = () => {
     switch (currentStep) {
       case "product":
         return (
-          <div className="max-w-[70vw] mx-auto">
+          <div className="md:max-w-[70vw] mx-auto">
             <ProductCard
               product={product}
               onAddToCart={handleAddToCart}

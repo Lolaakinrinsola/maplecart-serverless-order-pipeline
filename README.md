@@ -17,6 +17,7 @@ The project has two parts:
 - **[Phase 3 – Observability & Monitoring](./docs/PHASE3.md)**  
 - **[Phase 4 – Secure Configuration with Azure Key Vault & App Configuration](./docs/PHASE4.md)**  
 - **[Phase 5 – Event-Driven Analytics with Azure Event Grid and Cosmos DB](./docs/PHASE5.md)**  
+- **[Phase 6 – Frontend Integration & Deployment](./docs/PHASE6.md)**  
 
 ---
 

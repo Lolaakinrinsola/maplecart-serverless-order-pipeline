@@ -67,7 +67,7 @@ jobs:
 # -------------------------------------------------------------------
   deploy:
     runs-on: ubuntu-latest
-    name: 🚀 Deploy to Azure Static Web App
+    name: Deploy to Azure Static Web App
     needs: build-and-test
     steps:
       - name: Checkout repository
@@ -97,7 +97,7 @@ jobs:
 # -------------------------------------------------------------------
   smoke-test:
     runs-on: ubuntu-latest
-    name: 🔥 Post-Deployment Smoke Test
+    name: Post-Deployment Smoke Test
     needs: deploy
     steps:
       - name: Test API endpoint availability
@@ -117,7 +117,7 @@ jobs:
 # -------------------------------------------------------------------
   notify-logicapp:
     runs-on: ubuntu-latest
-    name: 📧 Notify Logic App (Deployment Status)
+    name: Notify Logic App (Deployment Status)
     needs: smoke-test
     if: always()
     steps:

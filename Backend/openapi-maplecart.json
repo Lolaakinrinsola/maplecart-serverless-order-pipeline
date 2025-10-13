@@ -1,0 +1,60 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "MapleCart API",
+      "version": "1.0.0",
+      "description": "Serverless API for order management on Azure Functions"
+    },
+    "paths": {
+      "/CreateOrder": {
+        "post": {
+          "summary": "Create a new order",
+          "operationId": "CreateOrder",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "item": { "type": "string" },
+                    "quantity": { "type": "integer" },
+                    "price": { "type": "number" },
+                    "total": { "type": "number" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Order created successfully"
+            }
+          }
+        }
+      },
+      "/GetOrders": {
+        "get": {
+          "summary": "Retrieve all orders",
+          "operationId": "GetOrders",
+          "parameters": [
+            {
+              "name": "source",
+              "in": "query",
+              "required": false,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "List of orders"
+            }
+          }
+        }
+      }
+    },
+    "servers": [
+      { "url": "https://maplecart-funcapp.azurewebsites.net/api" }
+    ]
+  }
+  

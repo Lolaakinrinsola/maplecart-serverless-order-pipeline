@@ -31,7 +31,7 @@ export const submitOrder = async (orderData: OrderData): Promise<OrderResponse> 
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json",
+        "Ocp-Apim-Subscription-Key": import.meta.env.VITE_APIM_SUB_KEY, // or process.env.NEXT_PUBLIC_APIM_SUB_KEY
       },
       body: JSON.stringify(orderData),
     });

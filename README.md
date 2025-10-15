@@ -18,6 +18,8 @@ The project has two parts:
 - **[Phase 4 – Secure Configuration with Azure Key Vault & App Configuration](./docs/PHASE4.md)**  
 - **[Phase 5 – Event-Driven Analytics with Azure Event Grid and Cosmos DB](./docs/PHASE5.md)**  
 - **[Phase 6 – Frontend Integration & Deployment](./docs/PHASE6.md)**  
+- **[Phase 7 – CI/CD Pipeline with Azure Logic App Notifications](./docs/PHASE7.md)**  
+- **[Phase 8 – Advanced Integration – Durable Functions + API Management](./docs/PHASE8.md)**  
 
 ---
 
